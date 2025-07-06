@@ -6,11 +6,17 @@ const verificationSchema = new Schema(
   {
     userId: {
       type: Types.ObjectId,
+      ref: "User",
       index: true,
       required: true,
     },
     token: {
       type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      default: "email_verification",
       required: true,
     },
     expiresAt: {

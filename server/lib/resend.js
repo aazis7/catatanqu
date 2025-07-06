@@ -13,6 +13,7 @@ export const sendEmailVerification = async (token, receiverEmail) => {
      <html>
       <body>
       <h1>Dear ${receiverEmail} click link below to verify your email</h1>
+      <p>Your token is ${token} please do not share to anyone for security</p>
      <a href=${verifyLink}>Verify email</a>
      </body>
      </html>

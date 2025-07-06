@@ -1,4 +1,4 @@
-import { verifyToken } from "../lib/jwt.js";
+import { verifyAccessToken } from "../lib/jwt.js";
 import { Session } from "../models/session.model.js";
 import { User } from "../models/user.model.js";
 import { asyncController } from "../utils/asyncController.js";
@@ -24,7 +24,7 @@ export const authenticate = asyncController(async (req, res, next) => {
 
   try {
     // Verify the token
-    const decoded = await verifyToken(token, "access");
+    const decoded = await verifyAccessToken(token);
 
     // Check if session exists
     const session = await Session.findById(decoded.sessionId);

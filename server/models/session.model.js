@@ -5,6 +5,7 @@ import { sevenDaysFromNow } from "../utils/formatDate.js";
 const sessionSchema = new Schema({
   userId: {
     type: Types.ObjectId,
+    ref: "User",
     index: true,
     required: true,
   },

@@ -29,7 +29,6 @@ const EmailVerificationSchema = Joi.object({
     .required()
     .lowercase()
     .trim(),
-  token: Joi.string().required(),
 });
 
 const PasswordResetRequestSchema = Joi.object({

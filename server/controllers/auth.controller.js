@@ -1,4 +1,8 @@
-import { signAccessToken, signRefreshToken, verifyToken } from "../lib/jwt.js";
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "../lib/jwt.js";
 import { sendEmailVerification } from "../lib/resend.js";
 import { Session } from "../models/session.model.js";
 import { User } from "../models/user.model.js";
@@ -165,7 +169,7 @@ export const refreshToken = asyncController(async (req, res, next) => {
   }
 
   try {
-    const { sessionId, userId } = await verifyToken(refreshToken, "refresh");
+    const { sessionId, userId } = await verifyRefreshToken(refreshToken);
 
     // Check if session exists
     const session = await Session.findById(sessionId);
@@ -206,13 +210,19 @@ export const verifyEmail = asyncController(async (req, res, next) => {
     req.body,
   );
 
+  const token = req.query.token;
+
+  if (!token) {
+    throw new HTTPException(400, "Token is required");
+  }
+
   if (error) {
     throw new HTTPException(400, error.message);
   }
 
   // Find verification record
   const verification = await Verification.findOne({
-    token: requestBody.token,
+    token,
   }).populate("userId");
 
   if (!verification) {
