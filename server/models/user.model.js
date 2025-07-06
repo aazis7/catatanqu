@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 
+import { generateAvatarUrl } from "../utils/generateAvatarUrl.js";
 import { hash } from "../utils/hash.js";
 
 const userSchema = new Schema(
@@ -31,10 +32,10 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) {
+  if (!this.isModified()) {
     this.password = await hash(this.password);
+    this.avatar = generateAvatarUrl(this.name);
   }
-  return this.password;
 });
 
 export const User = model("User", userSchema);
