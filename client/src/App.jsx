@@ -1,9 +1,19 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import Home from "@/pages/home";
+import RootLayout from "@/pages/layout";
+import NotFound from "@/pages/not-found";
+import { Route, Routes } from "react-router";
 
-import routes from "./routes";
-
-const router = createBrowserRouter(routes);
+import { ThemeProvider } from "./context/ThemeProvider";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider>
+      <Routes>
+        <Route path="/" Component={RootLayout}>
+          <Route index Component={Home} />
+        </Route>
+        <Route path="*" Component={NotFound} />
+      </Routes>
+    </ThemeProvider>
+  );
 }
