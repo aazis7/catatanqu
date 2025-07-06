@@ -3,7 +3,12 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../lib/jwt.js";
-import { sendEmailVerification } from "../lib/resend.js";
+import {
+  sendEmailVerification,
+  sendPasswordChangeConfirmationEmail,
+  sendPasswordResetEmail,
+  sendWelcomeEmail,
+} from "../lib/resend.js";
 import { Session } from "../models/session.model.js";
 import { User } from "../models/user.model.js";
 import { Verification } from "../models/verification.model.js";
@@ -12,6 +17,7 @@ import {
   LoginSchema,
   PasswordResetRequestSchema,
   PasswordResetSchema,
+  ProfileUpdateSchema,
   RegisterSchema,
 } from "../schema/auth.schema.js";
 import { asyncController } from "../utils/asyncController.js";
@@ -249,6 +255,14 @@ export const verifyEmail = asyncController(async (req, res, next) => {
   // Delete verification record
   await Verification.findByIdAndDelete(verification._id);
 
+  // Send welcome email after successful verification
+  try {
+    await sendWelcomeEmail(verification.userId.name, verification.userId.email);
+  } catch (emailError) {
+    console.error("Failed to send welcome email:", emailError);
+    // Don't throw error for welcome email failure
+  }
+
   return res.status(200).json({ message: "Email verified successfully" });
 });
 
@@ -308,8 +322,13 @@ export const forgotPassword = asyncController(async (req, res, next) => {
     type: "password_reset",
   });
 
-  // Send password reset email (implement this function)
-  // await sendPasswordResetEmail(resetToken.token, user.email);
+  // Send password reset email
+  try {
+    await sendPasswordResetEmail(resetToken.token, user.email);
+  } catch (emailError) {
+    console.error("Failed to send password reset email:", emailError);
+    // Still return success message to not reveal if user exists
+  }
 
   return res.status(200).json({
     message: "If an account with that email exists, a reset link has been sent",
@@ -350,6 +369,17 @@ export const resetPassword = asyncController(async (req, res, next) => {
 
   // Delete all user sessions (force re-login)
   await Session.deleteMany({ userId: user._id });
+
+  // Send password change confirmation email
+  try {
+    await sendPasswordChangeConfirmationEmail(user.email);
+  } catch (emailError) {
+    console.error(
+      "Failed to send password change confirmation email:",
+      emailError,
+    );
+    // Don't throw error for confirmation email failure
+  }
 
   return res.status(200).json({ message: "Password reset successfully" });
 });
