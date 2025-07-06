@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
+import { connectMongo } from "./lib/connectMongo.js";
 import { logger } from "./utils/logger.js";
 
 const app = express();
@@ -16,7 +17,8 @@ app.use(cookieParser());
 app.use(compression());
 app.use(helmet());
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await connectMongo();
   logger.info(`API Server listening on port ${PORT}`);
 });
 
