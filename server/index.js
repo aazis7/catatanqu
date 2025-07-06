@@ -8,6 +8,7 @@ import { connectMongo } from "./lib/connectMongo.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
 import { requestLogger } from "./middleware/requestLogger.js";
+import authRoute from "./routes/auth.route.js";
 import { logger } from "./utils/logger.js";
 
 const app = express();
@@ -33,6 +34,8 @@ app.use(requestLogger);
 app.get("/api/message", (_, res) => {
   res.status(200).json({ message: "It works!" });
 });
+
+app.use("/api", authRoute);
 
 app.use(notFound);
 app.use(errorHandler);

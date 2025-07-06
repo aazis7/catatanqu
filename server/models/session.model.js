@@ -24,6 +24,15 @@ const sessionSchema = new Schema({
     type: Date,
     default: sevenDaysFromNow,
   },
+  lastActivity: {
+    type: Date,
+    default: Date.now,
+    expires: 7 * 24 * 60 * 60, // 7 days
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 export const Session = model("Session", sessionSchema);
