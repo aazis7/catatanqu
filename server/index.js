@@ -1,3 +1,5 @@
+import "dotenv/config.js";
+
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -20,7 +22,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
+        ? "http://localhost:5173"
         : process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
